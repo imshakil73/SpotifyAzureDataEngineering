@@ -8,6 +8,10 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
+					"items": {
+						"value": "[ { \"schema\" : \"dbo\", \"table\" : \"DimUser\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"DimArtist\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"DimTrack\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"DimDate\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"FactStream\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" },]",
+						"type": "Expression"
+					},
 					"activities": [
 						{
 							"name": "Azure SQL to Lake",
