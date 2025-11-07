@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "ForEach1",
+				"name": "Incremantal Loop",
 				"type": "ForEach",
 				"dependsOn": [],
 				"userProperties": [],
@@ -38,7 +38,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select * from @{pipeline().parameters.schema}.@{pipeline().parameters.table} where @{pipeline().parameters.cdc_collunm} > '@{if(empty(pipeline().parameters.fromdate),activity('Last_cdc').output.value[0].cdc,pipeline().parameters.fromdate)}'\n",
+										"value": "select * from@{item().schema}.@{item().table} where @{item().cdc_collunm} > '@{if(empty(item().fromdate),activity('Last_cdc').output.value[0].cdc,item().fromdate)}'\n",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
@@ -117,7 +117,7 @@
 									"parameters": {
 										"container": "bronze",
 										"folder": {
-											"value": "@{pipeline().parameters.table}_cdc",
+											"value": "@{item().table}_cdc",
 											"type": "Expression"
 										},
 										"file": "cdc.json"
@@ -217,7 +217,7 @@
 												{
 													"type": "Query",
 													"text": {
-														"value": "SELECT MAX (@{pipeline().parameters.cdc_collunm}) as cdc from @{pipeline().parameters.schema}.@{pipeline().parameters.table}",
+														"value": "SELECT MAX (@{item().cdc_collunm}) as cdc from @{item().schema}.@{item().table}",
 														"type": "Expression"
 													}
 												}
@@ -282,7 +282,10 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"container": "bronze",
-													"folder": "cdc",
+													"folder": {
+														"value": "@{item().table}",
+														"type": "Expression"
+													},
 													"file": "Empty.json"
 												}
 											}
@@ -293,7 +296,10 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"container": "bronze",
-													"folder": "@{pipeline().parameters.table}_cdc",
+													"folder": {
+														"value": "@{item().table}_cdc",
+														"type": "Expression"
+													},
 													"file": "cdc.json"
 												}
 											}
@@ -307,17 +313,9 @@
 			}
 		],
 		"parameters": {
-			"schema": {
-				"type": "string"
-			},
-			"table": {
-				"type": "string"
-			},
-			"cdc_collunm": {
-				"type": "string"
-			},
-			"fromdate": {
-				"type": "string"
+			"loop_input": {
+				"type": "array",
+				"defaultValue": "[ { \"schema\" : \"dbo\", \"table\" : \"DimUser\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"DimArtist\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"DimTrack\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"DimDate\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"FactStream\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" },]"
 			}
 		},
 		"variables": {
