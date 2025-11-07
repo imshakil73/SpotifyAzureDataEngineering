@@ -9,7 +9,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "[ { \"schema\" : \"dbo\", \"table\" : \"DimUser\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"DimArtist\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"DimTrack\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"DimDate\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"FactStream\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" },]",
+						"value": "@pipeline().parameters.loop_input",
 						"type": "Expression"
 					},
 					"activities": [
@@ -42,7 +42,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select * from@{item().schema}.@{item().table} where @{item().cdc_collunm} > '@{if(empty(item().fromdate),activity('Last_cdc').output.value[0].cdc,item().fromdate)}'\n",
+										"value": "select * from @{item().schema}.@{item().table} where @{item().cdc_collunm} > '@{if(empty(item().fromdate),activity('Last_cdc').output.value[0].cdc,item().fromdate)}'\n",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
@@ -290,7 +290,7 @@
 												"parameters": {
 													"container": "bronze",
 													"folder": {
-														"value": "@{item().table}",
+														"value": "@{item().table}_cdc",
 														"type": "Expression"
 													},
 													"file": "Empty.json"
@@ -322,7 +322,38 @@
 		"parameters": {
 			"loop_input": {
 				"type": "array",
-				"defaultValue": "[ { \"schema\" : \"dbo\", \"table\" : \"DimUser\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"DimArtist\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"DimTrack\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"DimDate\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" }, { \"schema\" : \"dbo\", \"table\" : \"FactStream\", \"cdc_collunm\" : \"updated_at\", \"fromdate\" : \"\" },]"
+				"defaultValue": [
+					{
+						"schema": "dbo",
+						"table": "DimUser",
+						"cdc_collunm": "updated_at",
+						"fromdate": ""
+					},
+					{
+						"schema": "dbo",
+						"table": "DimArtist",
+						"cdc_collunm": "updated_at",
+						"fromdate": ""
+					},
+					{
+						"schema": "dbo",
+						"table": "DimTrack",
+						"cdc_collunm": "updated_at",
+						"fromdate": ""
+					},
+					{
+						"schema": "dbo",
+						"table": "DimDate",
+						"cdc_collunm": "date",
+						"fromdate": ""
+					},
+					{
+						"schema": "dbo",
+						"table": "FactStream",
+						"cdc_collunm": "stream_timestamp",
+						"fromdate": ""
+					}
+				]
 			}
 		},
 		"variables": {
