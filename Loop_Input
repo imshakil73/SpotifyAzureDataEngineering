@@ -22,4 +22,10 @@
 "table" : "DimDate",
 "cdc_collunm" : "updated_at",
 "fromdate" : ""
-}]
+},
+{
+"schema" : "dbo",
+"table" : "FactStream",
+"cdc_collunm" : "updated_at",
+"fromdate" : ""
+},]
